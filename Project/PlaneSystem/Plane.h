@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #pragma once
 
@@ -11,12 +12,8 @@ private:
 	string type;
 	int flights;
 
-	void SetId(int);
-	void SetName(const string&);
-	void SetType(const string&);
-	void SetFlights(int);
-
 public:
+	Plane();
 	Plane(int, const string&, const string&, int);
 
 	int GetId() const;
@@ -24,8 +21,15 @@ public:
 	string GetType() const;
 	int GetFlights() const;
 
-	void Print();
+	void SetId(int);
+	void SetName(const string&);
+	void SetType(const string&);
+	void SetFlights(int);
+
+	void Print() const;
 };
+
+Plane::Plane() { }
 
 Plane::Plane(int id, const string& name, const string& type, int flights)
 {
@@ -57,10 +61,45 @@ int Plane::GetFlights() const
 
 void Plane::SetId(int id)
 {
-	if (id <= 0)
+	if (id < 0)
 	{
-		throw invalid_argument("Id cannot be zero or negative!");
+		throw invalid_argument("Id cannot be negative!");
 	}
 
 	this->id = id;
+}
+
+void Plane::SetName(const string& name)
+{
+	if (name == "")
+	{
+		throw invalid_argument("Plane name cannot be an empty string!");
+	}
+
+	this->name = name;
+}
+
+void Plane::SetType(const string& type)
+{
+	if (type == "")
+	{
+		throw invalid_argument("Plane type cannot be an empty string!");
+	}
+
+	this->type = type;
+}
+
+void Plane::SetFlights(int flights)
+{
+	if (flights < 0)
+	{
+		throw invalid_argument("Plane flights cannot be negative!");
+	}
+
+	this->flights = flights;
+}
+
+void Plane::Print() const
+{
+	cout << "Plane: " << id << ", name: " << name << ", type: " << type << ", flights: " << flights << endl;
 }

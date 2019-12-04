@@ -1,4 +1,6 @@
+#include <fstream>
 #include <unordered_map>
+#include <vector>
 #include "Plane.h"
 #pragma once
 
@@ -8,8 +10,11 @@ class PlaneFactory
 {
 private:
 	unordered_map<int, Plane> planes;
+	vector<int> idsOrder;
 
 	bool HasId(int) const;
+	void AddPlane(string);
+	int GetIdIndex(int);
 
 public:
 	PlaneFactory();
@@ -17,7 +22,9 @@ public:
 	void Create(int, const string&, const string&, int);
 	void Delete(int);
 	void Update(int, const string&, const string&);
+
 	void ExtractFromFile(const string&);
+	void SaveToFile(const string&);
 
 	void Show(int, int);
 	void Optimize();
@@ -26,7 +33,10 @@ public:
 	void Print();
 };
 
-PlaneFactory::PlaneFactory() { }
+PlaneFactory::PlaneFactory()
+{
+//	idsOrder.resize(32);
+}
 
 bool PlaneFactory::HasId(int id) const
 {
@@ -64,6 +74,26 @@ void PlaneFactory::Search(int id)
 	planes[id].Print();
 }
 
+int PlaneFactory::GetIdIndex(int id)
+{
+	int index = 0;
+	vector<int>::iterator it = idsOrder.begin();
+
+	for (; it != idsOrder.end(); it++)
+	{
+		int current = *it;
+
+		if (current == id)
+		{
+			return index;
+		}
+
+		index++;
+	}
+
+	return -1;
+}
+
 /*
 TODO:
 if an element in the file is updated, add a flag to it
@@ -80,11 +110,21 @@ void PlaneFactory::Update(int id, const string& attribute, const string& valueTo
 	if (attribute == "Id")
 	{
 		int newId = stoi(valueToString);
+
+		if (HasId(newId))
+		{
+			throw invalid_argument("Plane id must be unique!");
+		}
+
+		int idIndex = GetIdIndex(id);
 		planes[id].SetId(newId);
 		unordered_map<int, Plane>::iterator it = planes.find(id);
 
 		swap(planes[newId], it->second);
 		planes.erase(it);
+
+		idsOrder.erase(idsOrder.begin() + idIndex);
+		idsOrder.insert(idsOrder.begin() + idIndex, newId);
 	}
 	else if (attribute == "Plane")
 	{
@@ -125,7 +165,6 @@ void PlaneFactory::Show(int offset, int limit)
 	}
 }
 
-//Test
 void PlaneFactory::Print()
 {
 	unordered_map<int, Plane>::iterator it = planes.begin();
@@ -134,4 +173,71 @@ void PlaneFactory::Print()
 	{
 		it->second.Print();
 	}
+}
+
+void PlaneFactory::AddPlane(string fileRecord)
+{
+	const string delimiter = " / ";
+	int position = 0;
+	string tokens[3];
+	int index = 0;
+
+	while ((position = fileRecord.find(delimiter)) != string::npos)
+	{
+		tokens[index] = fileRecord.substr(0, position);
+		index++;
+		fileRecord.erase(0, position + delimiter.size());
+	}
+
+	int id = stoi(tokens[0]);
+	string name = tokens[1];
+	string type = tokens[2];
+	int flights = stoi(fileRecord);
+
+	Plane plane(id, name, type, flights);
+	planes[id] = plane;
+	idsOrder.push_back(id);
+}
+
+void PlaneFactory::ExtractFromFile(const string& fileName)
+{
+	ifstream reader(fileName);
+
+	if (!reader)
+	{
+		throw ios_base::failure("Cannot open file");
+	}
+
+	string record;
+
+	while (getline(reader, record))
+	{
+		AddPlane(record);
+	}
+
+	reader.close();
+}
+
+/*
+TODO
+Update old records
+Append new records to the end
+*/
+void PlaneFactory::SaveToFile(const string& fileName)
+{
+	ofstream writer(fileName);
+
+	if (!writer)
+	{
+		throw ios_base::failure("Cannot open file");
+	}
+
+	unordered_map<int, Plane>::iterator it = planes.begin();
+
+	for (; it != planes.end(); it++)
+	{
+		writer << it->second;
+	}
+
+	writer.close();
 }

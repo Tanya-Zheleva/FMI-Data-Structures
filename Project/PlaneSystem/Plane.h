@@ -1,6 +1,6 @@
+#pragma once
 #include <iostream>
 #include <string>
-#pragma once
 
 using namespace std;
 
@@ -27,6 +27,8 @@ public:
 	void SetFlights(int);
 
 	void Print() const;
+
+	friend ostream& operator<<(ostream&, const Plane&);
 };
 
 Plane::Plane() { }
@@ -102,4 +104,11 @@ void Plane::SetFlights(int flights)
 void Plane::Print() const
 {
 	cout << "Plane: " << id << ", name: " << name << ", type: " << type << ", flights: " << flights << endl;
+}
+
+ostream& operator<<(ostream& out, const Plane& plane)
+{
+	out << plane.id << " / " << plane.name << " / "  << plane.type << " / " << plane.flights << endl;
+
+	return out;
 }

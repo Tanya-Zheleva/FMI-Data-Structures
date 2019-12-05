@@ -108,7 +108,7 @@ void Plane::Print() const
 
 ostream& operator<<(ostream& out, const Plane& plane)
 {
-	out << plane.id << " / " << plane.name << " / "  << plane.type << " / " << plane.flights << endl;
+	out << plane.id << ' ' << plane.name << ' '  << plane.type << ' ' << plane.flights << endl;
 
 	return out;
 }

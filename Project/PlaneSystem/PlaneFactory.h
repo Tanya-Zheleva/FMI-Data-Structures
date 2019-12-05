@@ -1,6 +1,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <vector>
+#include <regex>
 #include "Plane.h"
 #pragma once
 
@@ -35,7 +36,7 @@ public:
 
 PlaneFactory::PlaneFactory()
 {
-//	idsOrder.resize(32);
+	//	idsOrder.resize(32);
 }
 
 bool PlaneFactory::HasId(int id) const
@@ -175,28 +176,22 @@ void PlaneFactory::Print()
 	}
 }
 
-void PlaneFactory::AddPlane(string fileRecord)
+void PlaneFactory::AddPlane(string record)
 {
-	const string delimiter = " / ";
-	int position = 0;
-	string tokens[3];
-	int index = 0;
+	regex planeRegex("^(\\d+)\\s+((?:[A-Za-z]+\\s*\\d*)+)\\s+((?:[A-Za-z]+\\s*\\d*)+)\\s+(\\d+)$");
+	smatch matches;
 
-	while ((position = fileRecord.find(delimiter)) != string::npos)
-	{
-		tokens[index] = fileRecord.substr(0, position);
-		index++;
-		fileRecord.erase(0, position + delimiter.size());
+	if (regex_search(record, matches, planeRegex)) {
+
+		int id = stoi(matches[1].str());
+		string name = matches[2].str();
+		string type = matches[3].str();
+		int flights = stoi(matches[4].str());
+
+		Plane plane(id, name, type, flights);
+		planes[id] = plane;
+		idsOrder.push_back(id);
 	}
-
-	int id = stoi(tokens[0]);
-	string name = tokens[1];
-	string type = tokens[2];
-	int flights = stoi(fileRecord);
-
-	Plane plane(id, name, type, flights);
-	planes[id] = plane;
-	idsOrder.push_back(id);
 }
 
 void PlaneFactory::ExtractFromFile(const string& fileName)

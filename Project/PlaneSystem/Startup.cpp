@@ -12,8 +12,8 @@ int main()
 
 		factory.ExtractFromFile(fileName);
 
-		factory.Create(99, "Plane 7", "737 Max", 5);
-		factory.Update(5, "Id", "9");
+		//factory.Create(99, "Plane 7", "737 Max", 5);
+		//factory.Update(5, "Id", "9");
 		factory.Print();
 
 		/*factory.Create(5, "Plane 1", "AirBus", 7);

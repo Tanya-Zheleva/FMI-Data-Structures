@@ -26,6 +26,7 @@ public:
 	void SetType(const string&);
 	void SetFlights(int);
 
+	string ToString();
 	void Print() const;
 
 	friend ostream& operator<<(ostream&, const Plane&);
@@ -99,6 +100,17 @@ void Plane::SetFlights(int flights)
 	}
 
 	this->flights = flights;
+}
+
+string Plane::ToString()
+{
+	string result;
+	result += id + " ";
+	result += name + " ";
+	result += type + " ";
+	result += flights;
+
+	return result;
 }
 
 void Plane::Print() const

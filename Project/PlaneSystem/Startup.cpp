@@ -7,25 +7,52 @@ int main()
 {
 	try
 	{
-		PlaneFactory factory;
 		const string fileName = "PlanesDb.txt";
+		PlaneFactory factory(fileName);
 
-		factory.ExtractFromFile(fileName);
+		string input;
+		getline(cin, input);
 
-		//factory.Create(99, "Plane 7", "737 Max", 5);
-		//factory.Update(5, "Id", "9");
-		factory.Print();
+		while (input != "exit")
+		{
+			int firstSpaceIndex = input.find(' ');
+			string command = input.substr(0, firstSpaceIndex);
+			
+			if (command == "create")
+			{
 
-		/*factory.Create(5, "Plane 1", "AirBus", 7);
-		factory.Create(1234, "Plane 2", "AirBus 737", 77);
-		factory.Create(5555555, "Plane 33", "Concordia", 12);
-		factory.Create(2, "Plane 4444", "AirBus Max", 0);
-		factory.Print();
+			}
+			else if (command == "delete")
+			{
+				string idString = input.substr(firstSpaceIndex);
+				int id = stoi(idString);
+				factory.Delete(id);
+			}
+			else if (command == "update")
+			{
 
-		factory.SaveToFile(fileName);*/
-		/*
-		cout << endl;
-		factory.Print();*/
+			}
+			else if (command == "show")
+			{
+
+			}
+			else if (command == "optimize")
+			{
+				factory.Optimize();
+			}
+			else if (command == "search")
+			{
+				string idString = input.substr(firstSpaceIndex);
+				int id = stoi(idString);
+				factory.Search(id);
+			}
+			else if (command == "print")
+			{
+				factory.Print();
+			}
+
+			getline(cin, input);
+		}
 	}
 	catch (const exception& e)
 	{

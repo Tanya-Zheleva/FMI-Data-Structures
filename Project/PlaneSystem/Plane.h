@@ -17,8 +17,8 @@ public:
 	Plane(int, const string&, const string&, int);
 
 	int GetId() const;
-	string GetName() const;
-	string GetType() const;
+	const string GetName() const;
+	const string GetType() const;
 	int GetFlights() const;
 
 	void SetId(int);
@@ -26,7 +26,7 @@ public:
 	void SetType(const string&);
 	void SetFlights(int);
 
-	string ToString();
+	const string ToString();
 	void Print() const;
 
 	friend ostream& operator<<(ostream&, const Plane&);
@@ -47,12 +47,12 @@ int Plane::GetId() const
 	return id;
 }
 
-string Plane::GetName() const
+const string Plane::GetName() const
 {
 	return name;
 }
 
-string Plane::GetType() const
+const string Plane::GetType() const
 {
 	return type;
 }
@@ -102,7 +102,7 @@ void Plane::SetFlights(int flights)
 	this->flights = flights;
 }
 
-string Plane::ToString()
+const string Plane::ToString()
 {
 	string result;
 	result += id + " ";

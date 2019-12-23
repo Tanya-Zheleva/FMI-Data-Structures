@@ -15,6 +15,8 @@ private:
 
 public:
 	PlaneSearchTree();
+	PlaneSearchTree(const PlaneSearchTree&) = delete;
+	PlaneSearchTree& operator=(const PlaneSearchTree&) = delete;
 	~PlaneSearchTree();
 
 	void Reset();
@@ -28,11 +30,13 @@ public:
 
 void PlaneSearchTree::DeleteNode(Node* node)
 {
-	if (node->HasLeft()) {
+	if (node->HasLeft())
+	{
 		DeleteNode(node->left);
 	}
 
-	if (node->HasRight()) {
+	if (node->HasRight())
+	{
 		DeleteNode(node->right);
 	}
 

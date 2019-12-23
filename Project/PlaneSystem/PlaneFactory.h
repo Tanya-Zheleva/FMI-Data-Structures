@@ -26,7 +26,7 @@ public:
 	void Create(int, const string&, const string&, int);
 	void Delete(int);
 	void Update(int, const string&, const string&);
-
+	
 	void SaveToFile();
 
 	void Show(int, int);
@@ -98,7 +98,7 @@ void PlaneFactory::SearchOptimized(int id)
 		throw invalid_argument("Plane id not found!");
 	}
 
-	planesOptimized.Find(id).Print();
+	cout << planesOptimized.Find(id);
 }
 
 void PlaneFactory::Search(int id)
@@ -117,7 +117,7 @@ void PlaneFactory::Search(int id)
 		throw invalid_argument("Plane id not found!");
 	}
 
-	planes[idIndex].Print();
+	cout << planes[idIndex];
 }
 
 void PlaneFactory::Update(int id, const string& attribute, const string& valueToString)
@@ -129,7 +129,7 @@ void PlaneFactory::Update(int id, const string& attribute, const string& valueTo
 		throw invalid_argument("Plane id not found!");
 	}
 
-	if (attribute == "Id")
+	if (attribute == "Id" || attribute == "id")
 	{
 		int newId = stoi(valueToString);
 		int newIdIndex = GetIdIndex(newId);
@@ -141,15 +141,15 @@ void PlaneFactory::Update(int id, const string& attribute, const string& valueTo
 
 		planes[idIndex].SetId(newId);
 	}
-	else if (attribute == "Plane")
+	else if (attribute == "Plane" || attribute == "plane")
 	{
 		planes[idIndex].SetName(valueToString);
 	}
-	else if (attribute == "Type")
+	else if (attribute == "Type" || attribute == "type")
 	{
 		planes[idIndex].SetType(valueToString);
 	}
-	else if (attribute == "Flights")
+	else if (attribute == "Flights" || attribute == "flights")
 	{
 		int flights = stoi(valueToString);
 		planes[idIndex].SetFlights(flights);
@@ -173,7 +173,7 @@ void PlaneFactory::Show(int offset, int limit)
 
 	for (int i = offset; i < end; i++)
 	{
-		planes[i].Print();
+		cout << planes[i];
 	}
 }
 
@@ -191,7 +191,7 @@ void PlaneFactory::Print()
 {
 	for (int i = 0; i < planes.size(); i++)
 	{
-		planes[i].Print();
+		cout << planes[i];
 	}
 }
 
@@ -240,11 +240,9 @@ void PlaneFactory::SaveToFile()
 		throw ios_base::failure("Cannot open file");
 	}
 
-	vector<Plane>::iterator it = planes.begin();
-
-	for (; it != planes.end(); it++)
+	for (int i = 0; i < planes.size(); i++)
 	{
-		writer << *it;
+		writer << planes[i];
 	}
 
 	writer.close();

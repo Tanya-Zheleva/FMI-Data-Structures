@@ -2,6 +2,59 @@
 
 using namespace std;
 
+void Create(string &input, PlaneFactory &factory)
+{
+	regex createRegex("^create\\s+(\\d+)\\s+(.*?)\\s+([A-Za-z]+)\\s+(\\d+)$");
+	smatch matches;
+	regex_search(input, matches, createRegex);
+
+	int id = stoi(matches[1].str());
+	string name = matches[2].str();
+	string type = matches[3].str();
+	int flights = stoi(matches[4].str());
+
+	factory.Create(id, name, type, flights);
+}
+
+void Delete(string &input, int firstSpaceIndex, PlaneFactory &factory)
+{
+	string idString = input.substr(firstSpaceIndex);
+	int id = stoi(idString);
+	factory.Delete(id);
+}
+
+void Update(string &input, PlaneFactory &factory)
+{
+	regex updateRegex("^update\\s+(\\d+)\\s+([A-Za-z]+)\\s(.*?)$");
+
+	smatch matches;
+	regex_search(input, matches, updateRegex);
+
+	int id = stoi(matches[1].str());
+	string attribute = matches[2].str();
+	string value = matches[3].str();
+
+	factory.Update(id, attribute, value);
+}
+
+void Show(string &input, PlaneFactory &factory)
+{
+	regex showRegex("^show\\s+(\\d+)\\s+(\\d+)$");
+	smatch matches;
+	regex_search(input, matches, showRegex);
+
+	int offset = stoi(matches[1].str());
+	int limit = stoi(matches[2].str());
+	factory.Show(offset, limit);
+}
+
+void Search(string &input, int firstSpaceIndex, PlaneFactory &factory)
+{
+	string idString = input.substr(firstSpaceIndex);
+	int id = stoi(idString);
+	factory.Search(id);
+}
+
 int main()
 {
 	const string fileName = "PlanesDb.txt";
@@ -19,45 +72,19 @@ int main()
 
 			if (command == "create")
 			{
-				regex createRegex("^create\\s+(\\d+)\\s+(.*?)\\s+([A-Za-z]+)\\s+(\\d+)$");
-				smatch matches;
-				regex_search(input, matches, createRegex);
-
-				int id = stoi(matches[1].str());
-				string name = matches[2].str();
-				string type = matches[3].str();
-				int flights = stoi(matches[4].str());
-
-				factory.Create(id, name, type, flights);
+				Create(input, factory);
 			}
 			else if (command == "delete")
 			{
-				string idString = input.substr(firstSpaceIndex);
-				int id = stoi(idString);
-				factory.Delete(id);
+				Delete(input, firstSpaceIndex, factory);
 			}
 			else if (command == "update")
 			{
-				regex updateRegex("^update\\s+(\\d+)\\s+([A-Za-z]+)\\s(.*?)$");
-
-				smatch matches;
-				regex_search(input, matches, updateRegex);
-
-				int id = stoi(matches[1].str());
-				string attribute = matches[2].str();
-				string value = matches[3].str();
-
-				factory.Update(id, attribute, value);
+				Update(input, factory);
 			}
 			else if (command == "show")
 			{
-				regex showRegex("^show\\s+(\\d+)\\s+(\\d+)$");
-				smatch matches;
-				regex_search(input, matches, showRegex);
-
-				int offset = stoi(matches[1].str());
-				int limit = stoi(matches[2].str());
-				factory.Show(offset, limit);
+				Show(input, factory);
 			}
 			else if (command == "optimize")
 			{
@@ -65,9 +92,7 @@ int main()
 			}
 			else if (command == "search")
 			{
-				string idString = input.substr(firstSpaceIndex);
-				int id = stoi(idString);
-				factory.Search(id);
+				Search(input, firstSpaceIndex, factory);
 			}
 			else if (command == "print")
 			{
@@ -81,6 +106,8 @@ int main()
 
 		getline(cin, input);
 	}
+
+	factory.SaveToFile();
 
 	while (true) {}
 	return 0;

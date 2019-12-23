@@ -118,6 +118,8 @@
     <ClCompile Include="Startup.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PlaneSearchTree.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PlaneFactory.h" />
   </ItemGroup>

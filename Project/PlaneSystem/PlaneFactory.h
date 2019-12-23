@@ -1,26 +1,21 @@
 #include <fstream>
-#include <map>
 #include <vector>
-#include <utility>
 #include <regex>
-#include "Plane.h"
+#include "PlaneSearchTree.h"
 
 using namespace std;
 
 class PlaneFactory
 {
 private:
-	map<int, Plane> planesOptimized;
+	PlaneSearchTree planesOptimized;
 	vector<Plane> planes;
 	string fileName;
 	bool isOptimizeUsed;
 
-	bool HasIdOptimized(int) const;
+	void RemoveOptimized();
 	int GetIdIndex(int) const;
-
-	void DeleteOptimized(int);
 	void SearchOptimized(int);
-	void UpdateOptimized(int, const string&, const string&);
 
 	void CreateFilePlane(string);
 	void ExtractFromFile();
@@ -48,10 +43,6 @@ PlaneFactory::PlaneFactory(const string& fileName)
 	ExtractFromFile();
 }
 
-bool PlaneFactory::HasIdOptimized(int id) const
-{
-	return planesOptimized.count(id) > 0;
-}
 
 int PlaneFactory::GetIdIndex(int id) const
 {
@@ -63,38 +54,31 @@ int PlaneFactory::GetIdIndex(int id) const
 	return -1;
 }
 
+void PlaneFactory::RemoveOptimized()
+{
+	if (isOptimizeUsed)
+	{
+		isOptimizeUsed = false;
+		planesOptimized.Clear();
+		planesOptimized.Reset();
+	}
+}
+
 void PlaneFactory::Create(int id, const string& name, const string& type, int flights)
 {
-	if (GetIdIndex(id) < 0)
+	if (GetIdIndex(id) >= 0)
 	{
 		throw invalid_argument("Plane id must be unique!");
 	}
 
 	Plane plane(id, name, type, flights);
 	planes.push_back(plane);
-	isOptimizeUsed = false;
-	planesOptimized.clear();
-}
 
-void PlaneFactory::DeleteOptimized(int id)
-{
-	if (!HasIdOptimized(id))
-	{
-		throw invalid_argument("Plane id not found!");
-	}
-
-	planesOptimized.erase(id);
+	RemoveOptimized();
 }
 
 void PlaneFactory::Delete(int id)
 {
-	if (isOptimizeUsed)
-	{
-		DeleteOptimized(id);
-
-		return;
-	}
-
 	int idIndex = GetIdIndex(id);
 
 	if (idIndex < 0)
@@ -103,16 +87,18 @@ void PlaneFactory::Delete(int id)
 	}
 
 	planes.erase(planes.begin() + idIndex);
+
+	RemoveOptimized();
 }
 
 void PlaneFactory::SearchOptimized(int id)
 {
-	if (!HasIdOptimized(id))
+	if (!planesOptimized.Contains(id))
 	{
 		throw invalid_argument("Plane id not found!");
 	}
 
-	planesOptimized[id].Print();
+	planesOptimized.Find(id).Print();
 }
 
 void PlaneFactory::Search(int id)
@@ -134,56 +120,8 @@ void PlaneFactory::Search(int id)
 	planes[idIndex].Print();
 }
 
-void PlaneFactory::UpdateOptimized(int id, const string& attribute, const string& valueToString)
-{
-	if (!HasIdOptimized(id))
-	{
-		throw invalid_argument("Plane id not found!");
-	}
-
-	if (attribute == "Id")
-	{
-		int newId = stoi(valueToString);
-
-		if (HasIdOptimized(newId))
-		{
-			throw invalid_argument("Plane id must be unique!");
-		}
-
-		planesOptimized[id].SetId(newId);
-		map<int, Plane>::iterator it = planesOptimized.find(id);
-
-		swap(planesOptimized[newId], it->second);
-		planesOptimized.erase(it);
-	}
-	else if (attribute == "Plane")
-	{
-		planesOptimized[id].SetName(valueToString);
-	}
-	else if (attribute == "Type")
-	{
-		planesOptimized[id].SetType(valueToString);
-	}
-	else if (attribute == "Flights")
-	{
-		int flights = stoi(valueToString);
-		planesOptimized[id].SetFlights(flights);
-	}
-	else
-	{
-		throw invalid_argument("Invalid attribute!");
-	}
-}
-
 void PlaneFactory::Update(int id, const string& attribute, const string& valueToString)
 {
-	if (isOptimizeUsed)
-	{
-		UpdateOptimized(id, attribute, valueToString);
-
-		return;
-	}
-
 	int idIndex = GetIdIndex(id);
 
 	if (idIndex < 0)
@@ -220,6 +158,8 @@ void PlaneFactory::Update(int id, const string& attribute, const string& valueTo
 	{
 		throw invalid_argument("Invalid attribute!");
 	}
+
+	RemoveOptimized();
 }
 
 void PlaneFactory::Show(int offset, int limit)
@@ -243,7 +183,7 @@ void PlaneFactory::Optimize()
 
 	for (size_t i = 0; i < planes.size(); i++)
 	{
-		planesOptimized[planes[i].GetId()] = planes[i];
+		planesOptimized.Insert(planes[i]);
 	}
 }
 
@@ -257,7 +197,7 @@ void PlaneFactory::Print()
 
 void PlaneFactory::CreateFilePlane(string record)
 {
-	regex planeRegex("^(\\d+)\\s+((?:[A-Za-z]+\\s*\\d*)+)\\s+((?:[A-Za-z]+\\s*\\d*)+)\\s+(\\d+)$");
+	regex planeRegex("^(\\d+)\\s+(.*?)\\s+([A-Za-z]+)\\s+(\\d+)$");
 	smatch matches;
 
 	if (regex_search(record, matches, planeRegex)) {
@@ -308,4 +248,10 @@ void PlaneFactory::SaveToFile()
 	}
 
 	writer.close();
+
+	if (isOptimizeUsed)
+	{
+		isOptimizeUsed = false;
+		planesOptimized.Clear();
+	}
 }

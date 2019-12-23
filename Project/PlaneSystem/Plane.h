@@ -1,4 +1,3 @@
-#pragma once
 #include <iostream>
 #include <string>
 
@@ -15,6 +14,8 @@ private:
 public:
 	Plane();
 	Plane(int, const string&, const string&, int);
+	bool operator>(const Plane&) const;
+	bool operator==(const Plane&) const;
 
 	int GetId() const;
 	const string GetName() const;
@@ -40,6 +41,16 @@ Plane::Plane(int id, const string& name, const string& type, int flights)
 	SetName(name);
 	SetType(type);
 	SetFlights(flights);
+}
+
+bool Plane::operator>(const Plane& other) const
+{
+	return id > other.id;
+}
+
+bool Plane::operator==(const Plane& other) const
+{
+	return id == other.id && name == other.name && type == other.type && flights == other.flights;
 }
 
 int Plane::GetId() const

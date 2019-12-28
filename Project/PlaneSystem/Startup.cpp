@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void Create(string &input, PlaneFactory &factory)
+void Create(string& input, PlaneFactory& factory)
 {
 	regex createRegex("^create\\s+(\\d+)\\s+(.*?)\\s+([A-Za-z]+)\\s+(\\d+)$");
 	smatch matches;
@@ -16,14 +16,14 @@ void Create(string &input, PlaneFactory &factory)
 	factory.Create(id, name, type, flights);
 }
 
-void Delete(string &input, int firstSpaceIndex, PlaneFactory &factory)
+void Delete(string& input, int firstSpaceIndex, PlaneFactory& factory)
 {
 	string idString = input.substr(firstSpaceIndex);
 	int id = stoi(idString);
 	factory.Delete(id);
 }
 
-void Update(string &input, PlaneFactory &factory)
+void Update(string& input, PlaneFactory& factory)
 {
 	regex updateRegex("^update\\s+(\\d+)\\s+([A-Za-z]+)\\s(.*?)$");
 
@@ -37,7 +37,7 @@ void Update(string &input, PlaneFactory &factory)
 	factory.Update(id, attribute, value);
 }
 
-void Show(string &input, PlaneFactory &factory)
+void Show(string& input, PlaneFactory& factory)
 {
 	regex showRegex("^show\\s+(\\d+)\\s+(\\d+)$");
 	smatch matches;
@@ -48,7 +48,7 @@ void Show(string &input, PlaneFactory &factory)
 	factory.Show(offset, limit);
 }
 
-void Search(string &input, int firstSpaceIndex, PlaneFactory &factory)
+void Search(string& input, int firstSpaceIndex, PlaneFactory& factory)
 {
 	string idString = input.substr(firstSpaceIndex);
 	int id = stoi(idString);
